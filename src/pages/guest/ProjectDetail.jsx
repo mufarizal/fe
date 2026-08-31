@@ -1,35 +1,18 @@
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useLayoutEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { projectService } from "../../services/projectService";
+import { usePortofolio } from "../../context/PortofolioContext";
 import { getStorageUrl } from "../../utils/formatUrl";
+import { formatDate } from "../../utils/formatDate";
+import Sidebar from "../../components/guest/Sidebar";
 
 export default function ProjectDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-
-  const [project, setProject] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const { data, loading, error } = usePortofolio();
 
   useLayoutEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
-
-  useEffect(() => {
-    loadProject();
-  }, [id]);
-
-  const loadProject = async () => {
-    setLoading(true);
-    try {
-      const data = await projectService.getById(id);
-      setProject(data);
-    } catch {
-      setError("Project tidak ditemukan.");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleBack = () => navigate("/");
 
@@ -41,7 +24,7 @@ export default function ProjectDetail() {
     );
   }
 
-  if (error || !project) {
+  if (error || !data) {
     return (
       <div className="bg-black text-white min-h-screen flex items-center justify-center">
         <p className="text-white/60">{error}</p>
@@ -49,86 +32,106 @@ export default function ProjectDetail() {
     );
   }
 
+  const project = data.projects?.find((p) => String(p.id) === String(id));
+
+  if (!project) {
+    return (
+      <div className="bg-black text-white min-h-screen flex">
+        <Sidebar profile={data.profile} />
+        <div className="sm:ml-64 flex-1 flex items-center justify-center">
+          <p className="text-white/60">Project tidak ditemukan.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-black text-white min-h-screen animate-[fadeIn_0.25s_ease-out]">
-      <div className="max-w-3xl mx-auto px-6 py-16">
-        <button
-          onClick={handleBack}
-          className="text-sm text-white/50 hover:text-white mb-8 inline-block transition-colors"
-        >
-          ← Kembali
-        </button>
+      <Sidebar profile={data.profile} />
 
-        <div className="w-full h-64 bg-white/5 flex items-center justify-center text-white/20 text-sm mb-8 overflow-hidden">
-          {project.gambars?.[0]?.gambar ? (
-            <img
-              src={getStorageUrl(project.gambars[0].gambar)}
-              alt={project.nama}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            "Gambar Project"
-          )}
-        </div>
+      <main className="sm:ml-80 px-6 sm:px-12 pt-28 sm:pt-20 pb-20">
+        <div className="max-w-4xl mx-auto">
+          <button
+            onClick={handleBack}
+            className="text-base text-white/50 hover:text-white mb-10 inline-block transition-colors"
+          >
+            ← Kembali
+          </button>
 
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-semibold">{project.nama}</h1>
-          <span className="text-xs text-white/40 uppercase border border-white/20 px-2 py-1">
-            {project.status}
-          </span>
-        </div>
-
-        <p className="text-white/60 leading-relaxed mb-6">
-          {project.deskripsi}
-        </p>
-
-        {project.fitur && (
-          <div className="mb-6">
-            <h3 className="text-sm font-medium text-white/80 mb-2">Fitur</h3>
-            <p className="text-sm text-white/60">{project.fitur}</p>
-          </div>
-        )}
-
-        <p className="text-xs text-white/40 mb-8">
-          {project.tanggal_mulai} — {project.tanggal_selesai}
-        </p>
-
-        <div className="flex gap-3">
-          {project.link_github && (
-            <a
-              href={project.link_github}
-              target="_blank"
-              rel="noreferrer"
-              className="px-5 py-2 border border-white/30 hover:border-white transition-colors text-sm"
-            >
-              GitHub
-            </a>
-          )}
-          {project.link_demo && (
-            <a
-              href={project.link_demo}
-              target="_blank"
-              rel="noreferrer"
-              className="px-5 py-2 border border-white/30 hover:border-white transition-colors text-sm"
-            >
-              Live Demo
-            </a>
-          )}
-        </div>
-
-        {project.gambars?.length > 1 && (
-          <div className="grid grid-cols-3 gap-2 mt-10">
-            {project.gambars.slice(1).map((g) => (
+          <div className="w-full h-80 sm:h-96 bg-white/5 flex items-center justify-center text-white/20 text-base mb-10 overflow-hidden">
+            {project.gambars?.[0]?.gambar ? (
               <img
-                key={g.id}
-                src={getStorageUrl(g.gambar)}
-                alt=""
-                className="w-full h-24 object-cover border border-white/10"
+                src={getStorageUrl(project.gambars[0].gambar)}
+                alt={project.nama}
+                className="w-full h-full object-cover"
               />
-            ))}
+            ) : (
+              "Gambar Project"
+            )}
           </div>
-        )}
-      </div>
+
+          <div className="flex items-center justify-between mb-5">
+            <h1 className="text-4xl font-semibold">{project.nama}</h1>
+            <span className="text-sm text-white/40 uppercase border border-white/20 px-3 py-1.5">
+              {project.status}
+            </span>
+          </div>
+
+          <p className="text-white/60 text-lg leading-relaxed mb-8">
+            {project.deskripsi}
+          </p>
+
+          {project.fitur && (
+            <div className="mb-8">
+              <h3 className="text-base font-medium text-white/80 mb-3">
+                Fitur
+              </h3>
+              <p className="text-base text-white/60">{project.fitur}</p>
+            </div>
+          )}
+
+          <p className="text-sm text-white/40 mb-10">
+            {formatDate(project.tanggal_mulai)} —{" "}
+            {formatDate(project.tanggal_selesai)}
+          </p>
+
+          <div className="flex gap-4">
+            {project.link_github && (
+              <a
+                href={project.link_github}
+                target="_blank"
+                rel="noreferrer"
+                className="px-7 py-3 border border-white/30 hover:border-white transition-colors text-base"
+              >
+                GitHub
+              </a>
+            )}
+            {project.link_demo && (
+              <a
+                href={project.link_demo}
+                target="_blank"
+                rel="noreferrer"
+                className="px-7 py-3 border border-white/30 hover:border-white transition-colors text-base"
+              >
+                Live Demo
+              </a>
+            )}
+          </div>
+
+          {project.gambars?.length > 1 && (
+            <div className="flex gap-3 overflow-x-auto no-scrollbar mt-12 pb-2">
+              {project.gambars.slice(1).map((g) => (
+                <img
+                  key={g.id}
+                  src={getStorageUrl(g.gambar)}
+                  alt=""
+                  className="shrink-0 w-48 h-36 object-cover border border-white/10"
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </main>
     </div>
   );
 }

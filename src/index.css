@@ -2,6 +2,7 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-snap-type: y proximity;
 }
 
 body {
@@ -15,4 +16,16 @@ body {
   to {
     opacity: 1;
   }
+}
+
+.snap-section {
+  scroll-snap-align: start;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }

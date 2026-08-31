@@ -1,17 +1,12 @@
-import { useEffect, useState, useLayoutEffect } from "react";
+import { useLayoutEffect, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { portofolioService } from "../../services/portofolioService";
+import { usePortofolio } from "../../context/PortofolioContext";
 import { getStorageUrl } from "../../utils/formatUrl";
-import Navbar from "../../components/guest/Navbar";
+import { formatDate } from "../../utils/formatDate";
+import Sidebar from "../../components/guest/Sidebar";
 
 export default function Home() {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    loadData();
-  }, []);
+  const { data, loading, error } = usePortofolio();
 
   useLayoutEffect(() => {
     const saved = sessionStorage.getItem("guest-scroll-y");
@@ -28,18 +23,6 @@ export default function Home() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const loadData = async () => {
-    setLoading(true);
-    try {
-      const res = await portofolioService.get();
-      setData(res);
-    } catch {
-      setError("Gagal memuat data portofolio. Coba refresh halaman.");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   if (loading) {
     return (
@@ -68,78 +51,68 @@ export default function Home() {
 
   return (
     <div className="bg-black text-white min-h-screen animate-[fadeIn_0.25s_ease-out]">
-      <Navbar nama={profile?.nama} />
+      <Sidebar profile={profile} />
 
-      <main className="max-w-5xl mx-auto px-6 pt-24">
+      <main className="sm:ml-80 px-6 sm:px-12 pt-28 sm:pt-20">
         {/* HOME */}
         <section
           id="home"
-          className="min-h-[80vh] flex items-center scroll-mt-20"
+          className="snap-section min-h-[80vh] max-w-4xl mx-auto flex flex-col justify-center scroll-mt-20"
         >
-          <div className="flex flex-col-reverse sm:flex-row items-center gap-10 w-full">
-            <div className="flex-1">
-              <p className="text-white/60 mb-2">Halo, saya</p>
-              <h1 className="text-4xl sm:text-5xl font-semibold mb-3">
-                {profile?.nama}
-              </h1>
-              <h2 className="text-xl text-white/70 mb-6">{profile?.profesi}</h2>
-              <p className="text-white/60 max-w-lg leading-relaxed mb-8">
-                {profile?.deskripsi}
-              </p>
+          <p className="text-white/60 text-lg mb-3">Halo, saya</p>
+          <h1 className="text-5xl sm:text-7xl font-semibold mb-4">
+            {profile?.nama}
+          </h1>
+          <h2 className="text-2xl sm:text-3xl text-white/70 mb-8">
+            {profile?.profesi}
+          </h2>
+          <p className="text-white/60 text-lg max-w-2xl leading-relaxed mb-10">
+            {profile?.deskripsi}
+          </p>
 
-              <div className="flex gap-3">
-                <a
-                  href="#projects"
-                  className="px-5 py-2 border border-white text-white hover:bg-white hover:text-black transition-colors text-sm"
-                >
-                  Lihat Project
-                </a>
-                {profile?.cv && (
-                  <a
-                    href={getStorageUrl(profile.cv)}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="px-5 py-2 border border-white/30 text-white/80 hover:border-white hover:text-white transition-colors text-sm"
-                  >
-                    Download CV
-                  </a>
-                )}
-              </div>
-            </div>
-
-            <div className="w-40 h-40 sm:w-56 sm:h-56 border border-white/20 flex items-center justify-center text-white/30 text-xs shrink-0 overflow-hidden">
-              {profile?.foto ? (
-                <img
-                  src={getStorageUrl(profile.foto)}
-                  alt={profile.nama}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                "Foto Profile"
-              )}
-            </div>
+          <div className="flex gap-4">
+            <a
+              href="#projects"
+              className="px-7 py-3 border border-white text-white hover:bg-white hover:text-black transition-colors text-base"
+            >
+              Lihat Project
+            </a>
+            {profile?.cv && (
+              <a
+                href={getStorageUrl(profile.cv)}
+                target="_blank"
+                rel="noreferrer"
+                className="px-7 py-3 border border-white/30 text-white/80 hover:border-white hover:text-white transition-colors text-base"
+              >
+                Download CV
+              </a>
+            )}
           </div>
         </section>
 
         {/* PROJECTS */}
         <section
           id="projects"
-          className="py-24 border-t border-white/10 scroll-mt-20"
+          className="snap-section min-h-screen flex flex-col justify-center py-24 border-t border-white/10 scroll-mt-20"
         >
-          <h2 className="text-2xl font-semibold mb-8">Projects</h2>
+          <h2 className="text-4xl font-semibold mb-10 max-w-4xl mx-auto w-full">
+            Projects
+          </h2>
           {projects.length === 0 ? (
-            <p className="text-white/40 text-sm">Belum ada project.</p>
+            <p className="text-white/40 text-base max-w-4xl mx-auto w-full">
+              Belum ada project.
+            </p>
           ) : (
-            <div className="grid sm:grid-cols-2 gap-4">
+            <div className="flex gap-6 overflow-x-auto no-scrollbar snap-x snap-mandatory px-6 pb-4">
               {projects.map((p) => {
                 const thumbnail = p.gambars?.[0]?.gambar;
                 return (
                   <Link
                     key={p.id}
                     to={`/project/${p.id}`}
-                    className="block border border-white/10 hover:border-white/30 transition-colors overflow-hidden"
+                    className="shrink-0 w-96 snap-start border border-white/10 hover:border-white/30 transition-colors overflow-hidden"
                   >
-                    <div className="w-full h-36 bg-white/5 flex items-center justify-center text-white/20 text-xs overflow-hidden">
+                    <div className="w-full h-56 bg-white/5 flex items-center justify-center text-white/20 text-sm overflow-hidden">
                       {thumbnail ? (
                         <img
                           src={getStorageUrl(thumbnail)}
@@ -150,9 +123,9 @@ export default function Home() {
                         "Gambar Project"
                       )}
                     </div>
-                    <div className="p-5">
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-medium">{p.nama}</h3>
+                    <div className="p-6">
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="font-medium text-lg">{p.nama}</h3>
                         <span className="text-xs text-white/40 uppercase">
                           {p.status}
                         </span>
@@ -171,19 +144,23 @@ export default function Home() {
         {/* SKILLS */}
         <section
           id="skills"
-          className="py-24 border-t border-white/10 scroll-mt-20"
+          className="snap-section min-h-screen flex flex-col justify-center py-24 border-t border-white/10 scroll-mt-20"
         >
-          <h2 className="text-2xl font-semibold mb-8">Skills</h2>
+          <h2 className="text-4xl font-semibold mb-10 max-w-4xl mx-auto w-full">
+            Skills
+          </h2>
           {skills.length === 0 ? (
-            <p className="text-white/40 text-sm">Belum ada skill.</p>
+            <p className="text-white/40 text-base max-w-4xl mx-auto w-full">
+              Belum ada skill.
+            </p>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div className="flex gap-4 overflow-x-auto no-scrollbar snap-x snap-mandatory px-6 pb-4">
               {skills.map((s) => (
                 <div
                   key={s.id}
-                  className="flex items-center gap-3 border border-white/10 px-4 py-3 hover:border-white/30 transition-colors"
+                  className="shrink-0 snap-start flex items-center gap-3 border border-white/10 px-6 py-4 hover:border-white/30 transition-colors"
                 >
-                  <div className="w-8 h-8 border border-white/20 flex items-center justify-center text-xs shrink-0 overflow-hidden">
+                  <div className="w-8 h-8 flex items-center justify-center text-sm overflow-hidden shrink-0">
                     {s.icon ? (
                       <img
                         src={getStorageUrl(s.icon)}
@@ -194,7 +171,9 @@ export default function Home() {
                       s.nama[0]
                     )}
                   </div>
-                  <span className="text-sm text-white/80">{s.nama}</span>
+                  <span className="text-base text-white/80 whitespace-nowrap">
+                    {s.nama}
+                  </span>
                 </div>
               ))}
             </div>
@@ -204,21 +183,30 @@ export default function Home() {
         {/* KARIR */}
         <section
           id="karir"
-          className="py-24 border-t border-white/10 scroll-mt-20"
+          className="snap-section min-h-screen flex flex-col justify-center py-24 border-t border-white/10 scroll-mt-20"
         >
-          <h2 className="text-2xl font-semibold mb-10">Jenjang Karir</h2>
+          <h2 className="text-4xl font-semibold mb-10 max-w-4xl mx-auto w-full">
+            Jenjang Karir
+          </h2>
           {karirs.length === 0 ? (
-            <p className="text-white/40 text-sm">Belum ada riwayat karir.</p>
+            <p className="text-white/40 text-base max-w-4xl mx-auto w-full">
+              Belum ada riwayat karir.
+            </p>
           ) : (
-            <div className="border-l border-white/20 flex flex-col gap-10">
+            <div className="flex gap-6 overflow-x-auto no-scrollbar snap-x snap-mandatory px-6 pb-4">
               {karirs.map((k) => (
-                <div key={k.id} className="relative pl-6">
-                  <span className="absolute -left-[5px] top-1 w-2.5 h-2.5 rounded-full bg-white" />
-                  <span className="text-xs text-white/40">
-                    {k.tanggal_mulai} — {k.tanggal_selesai || "sekarang"}
+                <div
+                  key={k.id}
+                  className="shrink-0 w-80 snap-start border-l-2 border-white/30 pl-5 py-2"
+                >
+                  <span className="text-sm text-white/40">
+                    {formatDate(k.tanggal_mulai)} —{" "}
+                    {k.tanggal_selesai
+                      ? formatDate(k.tanggal_selesai)
+                      : "sekarang"}
                   </span>
-                  <h3 className="font-medium mt-1">{k.jabatan}</h3>
-                  <p className="text-sm text-white/60">{k.perusahaan}</p>
+                  <h3 className="font-medium text-xl mt-2">{k.jabatan}</h3>
+                  <p className="text-base text-white/60">{k.perusahaan}</p>
                 </div>
               ))}
             </div>
@@ -228,23 +216,30 @@ export default function Home() {
         {/* PENDIDIKAN */}
         <section
           id="pendidikan"
-          className="py-24 border-t border-white/10 scroll-mt-20"
+          className="snap-section min-h-screen flex flex-col justify-center py-24 border-t border-white/10 scroll-mt-20"
         >
-          <h2 className="text-2xl font-semibold mb-10">Pendidikan</h2>
+          <h2 className="text-4xl font-semibold mb-10 max-w-4xl mx-auto w-full">
+            Pendidikan
+          </h2>
           {pendidikans.length === 0 ? (
-            <p className="text-white/40 text-sm">
+            <p className="text-white/40 text-base max-w-4xl mx-auto w-full">
               Belum ada riwayat pendidikan.
             </p>
           ) : (
-            <div className="border-l border-white/20 flex flex-col gap-10">
+            <div className="flex gap-6 overflow-x-auto no-scrollbar snap-x snap-mandatory px-6 pb-4">
               {pendidikans.map((p) => (
-                <div key={p.id} className="relative pl-6">
-                  <span className="absolute -left-[5px] top-1 w-2.5 h-2.5 rounded-full bg-white" />
-                  <span className="text-xs text-white/40">
-                    {p.tanggal_mulai} — {p.tanggal_selesai || "sekarang"}
+                <div
+                  key={p.id}
+                  className="shrink-0 w-80 snap-start border-l-2 border-white/30 pl-5 py-2"
+                >
+                  <span className="text-sm text-white/40">
+                    {formatDate(p.tanggal_mulai)} —{" "}
+                    {p.tanggal_selesai
+                      ? formatDate(p.tanggal_selesai)
+                      : "sekarang"}
                   </span>
-                  <h3 className="font-medium mt-1">{p.nama}</h3>
-                  <p className="text-sm text-white/60">
+                  <h3 className="font-medium text-xl mt-2">{p.nama}</h3>
+                  <p className="text-base text-white/60">
                     {p.jurusan} · {p.jenjang}
                   </p>
                 </div>
@@ -256,30 +251,36 @@ export default function Home() {
         {/* SERTIFIKAT */}
         <section
           id="sertifikat"
-          className="py-24 border-t border-white/10 scroll-mt-20"
+          className="snap-section min-h-screen flex flex-col justify-center py-24 border-t border-white/10 scroll-mt-20"
         >
-          <h2 className="text-2xl font-semibold mb-8">Sertifikat</h2>
+          <h2 className="text-4xl font-semibold mb-10 max-w-4xl mx-auto w-full">
+            Sertifikat
+          </h2>
           {sertifikats.length === 0 ? (
-            <p className="text-white/40 text-sm">Belum ada sertifikat.</p>
+            <p className="text-white/40 text-base max-w-4xl mx-auto w-full">
+              Belum ada sertifikat.
+            </p>
           ) : (
-            <div className="grid sm:grid-cols-2 gap-4">
+            <div className="flex gap-6 overflow-x-auto no-scrollbar snap-x snap-mandatory px-6 pb-4">
               {sertifikats.map((s) => (
                 <a
                   key={s.id}
                   href={getStorageUrl(s.file_sertifikat)}
                   target="_blank"
                   rel="noreferrer"
-                  className="block border border-white/10 p-5 hover:border-white/30 transition-colors"
+                  className="shrink-0 w-80 snap-start block border border-white/10 p-7 hover:border-white/30 transition-colors"
                 >
-                  <h3 className="font-medium mb-1">{s.nama_sertifikat}</h3>
-                  <p className="text-sm text-white/60 mb-2">
+                  <h3 className="font-medium mb-2 text-lg">
+                    {s.nama_sertifikat}
+                  </h3>
+                  <p className="text-sm text-white/60 mb-3">
                     {s.lembaga_penerbit}
                   </p>
-                  <p className="text-xs text-white/40 mb-3">
-                    Terbit {s.tanggal_terbit} · Berlaku s/d{" "}
-                    {s.tanggal_kadaluarsa}
+                  <p className="text-xs text-white/40 mb-4">
+                    Terbit {formatDate(s.tanggal_terbit)} · s/d{" "}
+                    {formatDate(s.tanggal_kadaluarsa)}
                   </p>
-                  <span className="text-xs text-white/50 underline">
+                  <span className="text-sm text-white/50 underline">
                     Lihat dokumen
                   </span>
                 </a>
@@ -291,17 +292,17 @@ export default function Home() {
         {/* CONTACT */}
         <section
           id="contact"
-          className="py-24 border-t border-white/10 scroll-mt-20"
+          className="snap-section min-h-screen flex flex-col justify-center max-w-4xl mx-auto py-24 border-t border-white/10 scroll-mt-20"
         >
-          <h2 className="text-2xl font-semibold mb-6">Contact</h2>
-          <p className="text-white/60 mb-6">
+          <h2 className="text-4xl font-semibold mb-8">Contact</h2>
+          <p className="text-white/60 text-lg mb-8">
             Tertarik kolaborasi atau sekadar say hi? Hubungi saya lewat:
           </p>
-          <div className="flex flex-wrap gap-4 text-sm">
+          <div className="flex flex-wrap gap-5 text-base">
             {profile?.email && (
               <a
                 href={`mailto:${profile.email}`}
-                className="px-4 py-2 border border-white/20 hover:border-white transition-colors"
+                className="px-6 py-3 border border-white/20 hover:border-white transition-colors"
               >
                 Email
               </a>
@@ -311,7 +312,7 @@ export default function Home() {
                 href={`https://${profile.github}`}
                 target="_blank"
                 rel="noreferrer"
-                className="px-4 py-2 border border-white/20 hover:border-white transition-colors"
+                className="px-6 py-3 border border-white/20 hover:border-white transition-colors"
               >
                 GitHub
               </a>
@@ -321,7 +322,7 @@ export default function Home() {
                 href={`https://${profile.linkedin}`}
                 target="_blank"
                 rel="noreferrer"
-                className="px-4 py-2 border border-white/20 hover:border-white transition-colors"
+                className="px-6 py-3 border border-white/20 hover:border-white transition-colors"
               >
                 LinkedIn
               </a>
@@ -331,7 +332,7 @@ export default function Home() {
                 href={`https://instagram.com/${profile.instagram}`}
                 target="_blank"
                 rel="noreferrer"
-                className="px-4 py-2 border border-white/20 hover:border-white transition-colors"
+                className="px-6 py-3 border border-white/20 hover:border-white transition-colors"
               >
                 Instagram
               </a>
@@ -340,7 +341,7 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="text-center text-white/30 text-xs py-8 border-t border-white/10">
+      <footer className="sm:ml-80 text-center text-white/30 text-sm py-10 border-t border-white/10">
         © {new Date().getFullYear()} {profile?.nama}
       </footer>
     </div>

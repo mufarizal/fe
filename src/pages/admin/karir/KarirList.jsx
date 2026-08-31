@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { karirService } from "../../../services/karirService";
+import { formatDate } from "../../../utils/formatDate";
 import Card from "../../../components/common/Card";
 import Button from "../../../components/common/Button";
 
@@ -59,7 +60,8 @@ export default function KarirList() {
                   {item.perusahaan} · {item.status}
                 </p>
                 <p className="text-xs text-black/40">
-                  {item.tanggal_mulai} — {item.tanggal_selesai || "sekarang"}
+                  {formatDate(item.tanggal_mulai)} —{" "}
+                  {formatDate(item.tanggal_selesai)}
                 </p>
               </div>
               <div className="flex gap-2">

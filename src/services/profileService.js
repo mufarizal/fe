@@ -13,8 +13,8 @@ export const profileService = {
   },
 
   update: async (id, payload) => {
-    const formData = buildFormData(payload);
-    const res = await api.put(`/profile/${id}`, formData);
+    const formData = buildFormData(payload, true);
+    const res = await api.post(`/profile/${id}`, formData);
     return res.data.data;
   },
 };

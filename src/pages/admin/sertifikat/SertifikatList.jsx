@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { sertifikatService } from "../../../services/sertifikatService";
+import { formatDate } from "../../../utils/formatDate";
 import Card from "../../../components/common/Card";
 import Button from "../../../components/common/Button";
 
@@ -57,8 +58,8 @@ export default function SertifikatList() {
                 <h3 className="font-semibold">{item.nama_sertifikat}</h3>
                 <p className="text-sm text-black/60">{item.lembaga_penerbit}</p>
                 <p className="text-xs text-black/40">
-                  Terbit {item.tanggal_terbit} · Kadaluarsa{" "}
-                  {item.tanggal_kadaluarsa}
+                  Terbit {formatDate(item.tanggal_terbit)} · Kadaluarsa{" "}
+                  {formatDate(item.tanggal_kadaluarsa)}
                 </p>
               </div>
               <div className="flex gap-2">

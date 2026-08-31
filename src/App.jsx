@@ -16,15 +16,27 @@ import SkillList from "./pages/admin/skill/SkillList";
 import SkillForm from "./pages/admin/skill/SkillForm";
 import Home from "./pages/guest/Home";
 import ProjectDetail from "./pages/guest/ProjectDetail";
+import { PortofolioProvider } from "./context/PortofolioContext";
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/project/:id" element={<ProjectDetail />} />
-
-      <Route path="/admin/login" element={<Login />} />
-
+      <Route
+        path="/"
+        element={
+          <PortofolioProvider>
+            <Home />
+          </PortofolioProvider>
+        }
+      />
+      <Route
+        path="/project/:id"
+        element={
+          <PortofolioProvider>
+            <ProjectDetail />
+          </PortofolioProvider>
+        }
+      />
       <Route
         path="/admin"
         element={

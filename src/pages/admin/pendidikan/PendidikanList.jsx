@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { pendidikanService } from "../../../services/pendidikanService";
+import { formatDate } from "../../../utils/formatDate";
 import Card from "../../../components/common/Card";
 import Button from "../../../components/common/Button";
 
@@ -59,7 +60,7 @@ export default function PendidikanList() {
                   {item.jurusan} · {item.jenjang} · {item.status}
                 </p>
                 <p className="text-xs text-black/40">
-                  {item.tanggal_mulai} — {item.tanggal_selesai || "sekarang"}
+                  {formatDate(item.tanggal_mulai, item.tanggal_selesai)}
                 </p>
               </div>
               <div className="flex gap-2">
