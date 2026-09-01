@@ -76,7 +76,7 @@ export default function ProjectDetail() {
               {project.status}
             </span>
           </div>
-          <p className="text-white/60 text-lg leading-relaxed mb-8">
+          <p className="text-white/60 text-lg leading-relaxed mb-8 whitespace-pre-line">
             {project.deskripsi}
           </p>
 

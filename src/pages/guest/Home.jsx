@@ -66,7 +66,7 @@ export default function Home() {
           <h2 className="text-2xl sm:text-3xl text-white/70 mb-8">
             {profile?.profesi}
           </h2>
-          <p className="text-white/60 text-lg max-w-2xl leading-relaxed mb-10">
+          <p className="text-white/60 text-lg max-w-2xl leading-relaxed mb-10 whitespace-pre-line">
             {profile?.deskripsi}
           </p>
 
@@ -130,7 +130,7 @@ export default function Home() {
                           {p.status}
                         </span>
                       </div>
-                      <p className="text-sm text-white/60 line-clamp-2">
+                      <p className="text-sm text-white/60 line-clamp-2 whitespace-pre-line">
                         {p.deskripsi}
                       </p>
                     </div>
