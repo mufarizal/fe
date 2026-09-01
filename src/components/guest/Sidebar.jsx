@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { getStorageUrl } from "../../utils/formatUrl";
 
 const navItems = [
@@ -18,6 +19,7 @@ export default function Sidebar({ profile }) {
   const isProgrammaticScroll = useRef(false);
   const scrollTimeout = useRef(null);
   const lastScrollY = useRef(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const sections = navItems
@@ -53,14 +55,17 @@ export default function Sidebar({ profile }) {
     e.preventDefault();
     setMobileOpen(false);
     const target = document.getElementById(id);
-    if (!target) return;
-    clearTimeout(scrollTimeout.current);
-    isProgrammaticScroll.current = true;
-    setActive(id);
-    target.scrollIntoView({ behavior: "smooth", block: "start" });
-    scrollTimeout.current = setTimeout(() => {
-      isProgrammaticScroll.current = false;
-    }, 700);
+    if (target) {
+      clearTimeout(scrollTimeout.current);
+      isProgrammaticScroll.current = true;
+      setActive(id);
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+      scrollTimeout.current = setTimeout(() => {
+        isProgrammaticScroll.current = false;
+      }, 700);
+    } else {
+      navigate("/");
+    }
   };
 
   const socials = [

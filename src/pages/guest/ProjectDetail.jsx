@@ -58,12 +58,12 @@ export default function ProjectDetail() {
             ← Kembali
           </button>
 
-          <div className="w-full h-72 sm:h-80 bg-white/5 flex items-center justify-center text-white/20 text-base mb-10 overflow-hidden">
+          <div className="w-full bg-white/5 flex items-center justify-center text-white/20 text-base mb-10">
             {project.gambars?.[0]?.gambar ? (
               <img
                 src={getStorageUrl(project.gambars[0].gambar)}
                 alt={project.nama}
-                className="w-full h-full object-cover"
+                className="w-full h-auto"
               />
             ) : (
               "Gambar Project"
@@ -120,14 +120,15 @@ export default function ProjectDetail() {
           </div>
 
           {project.gambars?.length > 1 && (
-            <div className="flex gap-3 overflow-x-auto no-scrollbar mt-12 pb-2">
+            <div className="flex flex-col gap-4 mt-12">
               {project.gambars.slice(1).map((g) => (
-                <img
-                  key={g.id}
-                  src={getStorageUrl(g.gambar)}
-                  alt=""
-                  className="shrink-0 w-48 h-36 object-cover border border-white/10"
-                />
+                <div key={g.id} className="w-full bg-white/5 border border-white/10">
+                  <img
+                    src={getStorageUrl(g.gambar)}
+                    alt=""
+                    className="w-full h-auto"
+                  />
+                </div>
               ))}
             </div>
           )}
