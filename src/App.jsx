@@ -64,7 +64,6 @@ function App() {
         <Route path="skill" element={<SkillList />} />
         <Route path="skill/new" element={<SkillForm />} />
         <Route path="skill/:id" element={<SkillForm />} />
-        {/* route profile, project, karir, pendidikan, sertifikat, skill nyusul step berikutnya */}
       </Route>
     </Routes>
   );

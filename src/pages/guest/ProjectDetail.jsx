@@ -85,7 +85,9 @@ export default function ProjectDetail() {
               <h3 className="text-base font-medium text-white/80 mb-3">
                 Fitur
               </h3>
-              <p className="text-base text-white/60">{project.fitur}</p>
+              <p className="text-base text-white/60 whitespace-pre-line">
+                {project.fitur}
+              </p>
             </div>
           )}
 
