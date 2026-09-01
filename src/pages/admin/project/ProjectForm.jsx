@@ -50,7 +50,9 @@ export default function ProjectForm() {
         err.response?.data?.message ||
         err.response?.data?.error ||
         "Gagal memuat data project.";
-      setError(`${msg}${err.response?.status ? ` (${err.response.status})` : ""}`);
+      setError(
+        `${msg}${err.response?.status ? ` (${err.response.status})` : ""}`,
+      );
       setLoading(false);
       return;
     }
@@ -60,7 +62,9 @@ export default function ProjectForm() {
       deskripsi: data.deskripsi || "",
       fitur: data.fitur || "",
       tanggal_mulai: data.tanggal_mulai ? data.tanggal_mulai.split("T")[0] : "",
-      tanggal_selesai: data.tanggal_selesai ? data.tanggal_selesai.split("T")[0] : "",
+      tanggal_selesai: data.tanggal_selesai
+        ? data.tanggal_selesai.split("T")[0]
+        : "",
       status: data.status || "",
       link_github: data.link_github || "",
       link_demo: data.link_demo || "",
@@ -104,7 +108,9 @@ export default function ProjectForm() {
       const detail = err.response?.data?.errors
         ? `\n${JSON.stringify(err.response.data.errors)}`
         : "";
-      setError(`${msg}${detail}${err.response?.status ? ` (${err.response.status})` : ""}`);
+      setError(
+        `${msg}${detail}${err.response?.status ? ` (${err.response.status})` : ""}`,
+      );
     } finally {
       setSaving(false);
     }

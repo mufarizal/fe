@@ -14,9 +14,10 @@ const navItems = [
 export default function Sidebar({ profile }) {
   const [active, setActive] = useState("home");
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [brokenFoto, setBrokenFoto] = useState(false);
+  const [rotation, setRotation] = useState(0);
   const isProgrammaticScroll = useRef(false);
   const scrollTimeout = useRef(null);
+  const lastScrollY = useRef(0);
 
   useEffect(() => {
     const sections = navItems
@@ -35,19 +36,28 @@ export default function Sidebar({ profile }) {
     return () => observer.disconnect();
   }, []);
 
+  // Foto muter sesuai arah scroll: ke bawah -> muter satu arah, ke atas -> muter arah sebaliknya
+  useEffect(() => {
+    lastScrollY.current = window.scrollY;
+    const handleScroll = () => {
+      const currentY = window.scrollY;
+      const delta = currentY - lastScrollY.current;
+      setRotation((prev) => prev + delta * 0.4);
+      lastScrollY.current = currentY;
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const handleNavClick = (id) => (e) => {
     e.preventDefault();
     setMobileOpen(false);
-
     const target = document.getElementById(id);
     if (!target) return;
-
     clearTimeout(scrollTimeout.current);
     isProgrammaticScroll.current = true;
     setActive(id);
-
     target.scrollIntoView({ behavior: "smooth", block: "start" });
-
     scrollTimeout.current = setTimeout(() => {
       isProgrammaticScroll.current = false;
     }, 700);
@@ -75,19 +85,22 @@ export default function Sidebar({ profile }) {
 
   return (
     <>
-      <aside className="hidden sm:flex fixed left-0 top-0 h-screen w-80 flex-col justify-between border-r border-white/10 px-10 py-12 z-40">
+      <aside className="hidden sm:flex fixed left-0 top-0 h-screen w-80 flex-col justify-between px-10 py-12 z-40">
         <div>
-          <div className="w-24 h-24 border border-white/20 flex items-center justify-center text-white/30 text-sm mb-6 overflow-hidden">
-            {profile?.foto && !brokenFoto ? (
+          <div
+            className="w-28 h-28 rounded-full overflow-hidden mb-6 will-change-transform"
+            style={{ transform: `rotate(${rotation}deg)` }}
+          >
+            {profile?.foto ? (
               <img
                 src={getStorageUrl(profile.foto)}
                 alt={profile.nama}
                 className="w-full h-full object-cover"
-                onError={() => setBrokenFoto(true)}
-                onLoad={() => setBrokenFoto(false)}
               />
             ) : (
-              "Foto"
+              <div className="w-full h-full bg-white/5 flex items-center justify-center text-white/30 text-sm">
+                Foto
+              </div>
             )}
           </div>
           <h1 className="font-semibold text-2xl mb-2">{profile?.nama}</h1>
@@ -99,10 +112,10 @@ export default function Sidebar({ profile }) {
                 key={item.id}
                 href={`#${item.id}`}
                 onClick={handleNavClick(item.id)}
-                className={`text-base py-2 border-l-2 pl-4 transition-colors ${
+                className={`text-base py-1.5 transition-colors ${
                   active === item.id
-                    ? "border-white text-white"
-                    : "border-white/10 text-white/40 hover:text-white/70 hover:border-white/40"
+                    ? "text-white"
+                    : "text-white/40 hover:text-white/70"
                 }`}
               >
                 {item.label}
@@ -128,11 +141,27 @@ export default function Sidebar({ profile }) {
         )}
       </aside>
 
-      <nav className="sm:hidden fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur border-b border-white/10">
+      <nav className="sm:hidden fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur">
         <div className="px-6 py-5 flex items-center justify-between">
-          <span className="font-semibold tracking-wide text-base">
-            {profile?.nama}
-          </span>
+          <div className="flex items-center gap-3">
+            <div
+              className="w-10 h-10 rounded-full overflow-hidden will-change-transform"
+              style={{ transform: `rotate(${rotation}deg)` }}
+            >
+              {profile?.foto ? (
+                <img
+                  src={getStorageUrl(profile.foto)}
+                  alt={profile.nama}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full bg-white/5" />
+              )}
+            </div>
+            <span className="font-semibold tracking-wide text-base">
+              {profile?.nama}
+            </span>
+          </div>
           <button
             className="text-white text-2xl"
             onClick={() => setMobileOpen(!mobileOpen)}
@@ -143,7 +172,7 @@ export default function Sidebar({ profile }) {
         </div>
 
         {mobileOpen && (
-          <div className="border-t border-white/10 px-6 py-4 flex flex-col gap-3">
+          <div className="px-6 py-4 flex flex-col gap-3">
             {navItems.map((item) => (
               <a
                 key={item.id}

@@ -110,22 +110,22 @@ export default function Home() {
                   <Link
                     key={p.id}
                     to={`/project/${p.id}`}
-                    className="shrink-0 w-96 snap-start border border-white/10 hover:border-white/30 transition-colors overflow-hidden"
+                    className="shrink-0 w-96 snap-start overflow-hidden group"
                   >
-                    <div className="w-full h-56 bg-white/5 flex items-center justify-center text-white/20 text-sm overflow-hidden">
+                    <div className="w-full h-64 bg-white/5 flex items-center justify-center text-white/20 text-sm overflow-hidden">
                       {thumbnail ? (
                         <img
                           src={getStorageUrl(thumbnail)}
                           alt={p.nama}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover group-hover:opacity-80 transition-opacity"
                         />
                       ) : (
                         "Gambar Project"
                       )}
                     </div>
-                    <div className="p-6">
-                      <div className="flex items-center justify-between mb-3">
-                        <h3 className="font-medium text-lg">{p.nama}</h3>
+                    <div className="pt-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="font-medium text-xl">{p.nama}</h3>
                         <span className="text-xs text-white/40 uppercase">
                           {p.status}
                         </span>
@@ -154,27 +154,14 @@ export default function Home() {
               Belum ada skill.
             </p>
           ) : (
-            <div className="flex gap-4 overflow-x-auto no-scrollbar snap-x snap-mandatory px-6 pb-4">
+            <div className="flex gap-8 overflow-x-auto no-scrollbar snap-x snap-mandatory px-6 pb-4">
               {skills.map((s) => (
-                <div
+                <span
                   key={s.id}
-                  className="shrink-0 snap-start flex items-center gap-3 border border-white/10 px-6 py-4 hover:border-white/30 transition-colors"
+                  className="shrink-0 snap-start text-xl text-white/70 hover:text-white transition-colors whitespace-nowrap"
                 >
-                  <div className="w-8 h-8 flex items-center justify-center text-sm overflow-hidden shrink-0">
-                    {s.icon ? (
-                      <img
-                        src={getStorageUrl(s.icon)}
-                        alt={s.nama}
-                        className="w-full h-full object-contain"
-                      />
-                    ) : (
-                      s.nama[0]
-                    )}
-                  </div>
-                  <span className="text-base text-white/80 whitespace-nowrap">
-                    {s.nama}
-                  </span>
-                </div>
+                  {s.nama}
+                </span>
               ))}
             </div>
           )}
@@ -193,19 +180,17 @@ export default function Home() {
               Belum ada riwayat karir.
             </p>
           ) : (
-            <div className="flex gap-6 overflow-x-auto no-scrollbar snap-x snap-mandatory px-6 pb-4">
+            <div className="flex gap-8 overflow-x-auto no-scrollbar snap-x snap-mandatory px-6 pb-4">
               {karirs.map((k) => (
-                <div
-                  key={k.id}
-                  className="shrink-0 w-80 snap-start border-l-2 border-white/30 pl-5 py-2"
-                >
-                  <span className="text-sm text-white/40">
+                <div key={k.id} className="shrink-0 w-80 snap-start">
+                  <span className="inline-block w-2 h-2 rounded-full bg-white mb-3" />
+                  <p className="text-sm text-white/40 mb-1">
                     {formatDate(k.tanggal_mulai)} —{" "}
                     {k.tanggal_selesai
                       ? formatDate(k.tanggal_selesai)
                       : "sekarang"}
-                  </span>
-                  <h3 className="font-medium text-xl mt-2">{k.jabatan}</h3>
+                  </p>
+                  <h3 className="font-medium text-xl">{k.jabatan}</h3>
                   <p className="text-base text-white/60">{k.perusahaan}</p>
                 </div>
               ))}
@@ -226,19 +211,17 @@ export default function Home() {
               Belum ada riwayat pendidikan.
             </p>
           ) : (
-            <div className="flex gap-6 overflow-x-auto no-scrollbar snap-x snap-mandatory px-6 pb-4">
+            <div className="flex gap-8 overflow-x-auto no-scrollbar snap-x snap-mandatory px-6 pb-4">
               {pendidikans.map((p) => (
-                <div
-                  key={p.id}
-                  className="shrink-0 w-80 snap-start border-l-2 border-white/30 pl-5 py-2"
-                >
-                  <span className="text-sm text-white/40">
+                <div key={p.id} className="shrink-0 w-80 snap-start">
+                  <span className="inline-block w-2 h-2 rounded-full bg-white mb-3" />
+                  <p className="text-sm text-white/40 mb-1">
                     {formatDate(p.tanggal_mulai)} —{" "}
                     {p.tanggal_selesai
                       ? formatDate(p.tanggal_selesai)
                       : "sekarang"}
-                  </span>
-                  <h3 className="font-medium text-xl mt-2">{p.nama}</h3>
+                  </p>
+                  <h3 className="font-medium text-xl">{p.nama}</h3>
                   <p className="text-base text-white/60">
                     {p.jurusan} · {p.jenjang}
                   </p>
@@ -261,14 +244,14 @@ export default function Home() {
               Belum ada sertifikat.
             </p>
           ) : (
-            <div className="flex gap-6 overflow-x-auto no-scrollbar snap-x snap-mandatory px-6 pb-4">
+            <div className="flex gap-8 overflow-x-auto no-scrollbar snap-x snap-mandatory px-6 pb-4">
               {sertifikats.map((s) => (
                 <a
                   key={s.id}
                   href={getStorageUrl(s.file_sertifikat)}
                   target="_blank"
                   rel="noreferrer"
-                  className="shrink-0 w-80 snap-start block border border-white/10 p-7 hover:border-white/30 transition-colors"
+                  className="shrink-0 w-80 snap-start block hover:opacity-70 transition-opacity"
                 >
                   <h3 className="font-medium mb-2 text-lg">
                     {s.nama_sertifikat}
@@ -276,7 +259,7 @@ export default function Home() {
                   <p className="text-sm text-white/60 mb-3">
                     {s.lembaga_penerbit}
                   </p>
-                  <p className="text-xs text-white/40 mb-4">
+                  <p className="text-xs text-white/40 mb-3">
                     Terbit {formatDate(s.tanggal_terbit)} · s/d{" "}
                     {formatDate(s.tanggal_kadaluarsa)}
                   </p>

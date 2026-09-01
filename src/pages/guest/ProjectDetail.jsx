@@ -58,7 +58,7 @@ export default function ProjectDetail() {
             ← Kembali
           </button>
 
-          <div className="w-full h-80 sm:h-96 bg-white/5 flex items-center justify-center text-white/20 text-base mb-10 overflow-hidden">
+          <div className="w-full h-72 sm:h-80 bg-white/5 flex items-center justify-center text-white/20 text-base mb-10 overflow-hidden">
             {project.gambars?.[0]?.gambar ? (
               <img
                 src={getStorageUrl(project.gambars[0].gambar)}
@@ -71,12 +71,11 @@ export default function ProjectDetail() {
           </div>
 
           <div className="flex items-center justify-between mb-5">
-            <h1 className="text-4xl font-semibold">{project.nama}</h1>
-            <span className="text-sm text-white/40 uppercase border border-white/20 px-3 py-1.5">
+            <h1 className="text-3xl font-semibold">{project.nama}</h1>
+            <span className="text-xs text-white/40 uppercase px-3 py-1.5">
               {project.status}
             </span>
           </div>
-
           <p className="text-white/60 text-lg leading-relaxed mb-8">
             {project.deskripsi}
           </p>
